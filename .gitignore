@@ -63,6 +63,13 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
+# React build and cache files
+/frontend/build
+/frontend/node_modules
+/frontend/.cache
+**/node_modules/.cache/
+**/.cache/
+
 # Runtime data
 pids
 *.pid
@@ -229,11 +236,9 @@ dist
 *.pem
 *.cert
 
-# Local development
-.env.local
-.env.development
-.env.test
-.env.production
+# Large pack files and cache
+*.pack
+**/.cache/
 
 # BlueBank specific
 backend/staticfiles/
