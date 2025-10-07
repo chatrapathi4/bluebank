@@ -1,0 +1,65 @@
+.App {
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.App-header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+}
+
+.hero-section {
+  background: linear-gradient(135deg, #003d82 0%, #4a6fa5 100%);
+  color: white;
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.feature-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+}
+
+.dashboard-card {
+  margin-bottom: 1.5rem;
+}
+
+.balance-card {
+  background: linear-gradient(135deg, #003d82 0%, #4a6fa5 100%);
+  color: white;
+}
+
+.quick-action-btn {
+  margin: 0.5rem;
+}
+
+.transaction-item {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.transaction-item:last-child {
+  border-bottom: none;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 2rem 0;
+  }
+  
+  .hero-section h2 {
+    font-size: 1.8rem;
+  }
+}
