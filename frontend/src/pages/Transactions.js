@@ -21,6 +21,8 @@ import {
   FilterList,
   Download,
   Search,
+  TrendingUp,
+  TrendingDown,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -112,6 +114,28 @@ const Transactions = () => {
       hour: '2-digit',
       minute: '2-digit',
     });
+  };
+
+  // Determine if transaction is credit or debit
+  const getTransactionDirection = (transaction) => {
+    // If transaction type is DEPOSIT, it's a credit
+    if (transaction.transaction_type === 'DEPOSIT') {
+      return 'CREDIT';
+    }
+    // Otherwise, it's a debit (TRANSFER, WITHDRAWAL, etc.)
+    return 'DEBIT';
+  };
+
+  const getTransactionIcon = (direction) => {
+    return direction === 'CREDIT' ? <TrendingUp /> : <TrendingDown />;
+  };
+
+  const getTransactionColor = (direction) => {
+    return direction === 'CREDIT' ? 'success.main' : 'error.main';
+  };
+
+  const getTransactionPrefix = (direction) => {
+    return direction === 'CREDIT' ? '+' : '-';
   };
 
   // Pagination
@@ -269,52 +293,84 @@ const Transactions = () => {
           {paginatedTransactions.length > 0 ? (
             <>
               <List>
-                {paginatedTransactions.map((transaction, index) => (
-                  <React.Fragment key={transaction.id}>
-                    <ListItem alignItems="flex-start" sx={{ px: 0 }}>
-                      <ListItemText
-                        primary={
-                          <Box display="flex" justifyContent="space-between" alignItems="flex-start">
-                            <Box>
-                              <Typography variant="subtitle1" fontWeight="bold">
-                                To: {transaction.beneficiary_name || 'Unknown'}
-                              </Typography>
-                              <Typography variant="body2" color="text.secondary">
-                                Account: {transaction.to_account_number}
-                              </Typography>
-                              <Typography variant="caption" color="text.secondary">
-                                {formatDateTime(transaction.created_at)}
-                              </Typography>
+                {paginatedTransactions.map((transaction, index) => {
+                  const direction = getTransactionDirection(transaction);
+                  const isCredit = direction === 'CREDIT';
+                  
+                  return (
+                    <React.Fragment key={transaction.id}>
+                      <ListItem alignItems="flex-start" sx={{ px: 0 }}>
+                        <ListItemText
+                          primary={
+                            <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+                              <Box>
+                                <Typography variant="subtitle1" fontWeight="bold">
+                                  {isCredit ? (
+                                    <>From: {transaction.beneficiary_name || 'Unknown'}</>
+                                  ) : (
+                                    <>To: {transaction.beneficiary_name || 'Unknown'}</>
+                                  )}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                  Account: {transaction.to_account_number}
+                                </Typography>
+                                <Typography variant="caption" color="text.secondary">
+                                  {formatDateTime(transaction.created_at)}
+                                </Typography>
+                              </Box>
+                              <Box textAlign="right">
+                                <Box display="flex" alignItems="center" justifyContent="flex-end" mb={1}>
+                                  {getTransactionIcon(direction)}
+                                  <Typography 
+                                    variant="h6" 
+                                    color={getTransactionColor(direction)} 
+                                    fontWeight="bold"
+                                    sx={{ ml: 0.5 }}
+                                  >
+                                    {getTransactionPrefix(direction)}{formatCurrency(transaction.amount)}
+                                  </Typography>
+                                </Box>
+                                
+                                {/* Credit/Debit Message */}
+                                <Typography 
+                                  variant="caption" 
+                                  sx={{ 
+                                    color: getTransactionColor(direction),
+                                    fontWeight: 'bold',
+                                    fontSize: '0.75rem',
+                                    display: 'block',
+                                    mb: 1
+                                  }}
+                                >
+                                  {isCredit ? '● Credited' : '● Debited'}
+                                </Typography>
+                                
+                                <Chip 
+                                  label={transaction.status} 
+                                  color={getStatusColor(transaction.status)}
+                                  size="small"
+                                />
+                              </Box>
                             </Box>
-                            <Box textAlign="right">
-                              <Typography variant="h6" color="primary" fontWeight="bold">
-                                -{formatCurrency(transaction.amount)}
+                          }
+                          secondary={
+                            <Box mt={1}>
+                              <Typography variant="body2" color="text.secondary" component="div">
+                                Transaction ID: {transaction.transaction_id}
                               </Typography>
-                              <Chip 
-                                label={transaction.status} 
-                                color={getStatusColor(transaction.status)}
-                                size="small"
-                              />
+                              {transaction.description && (
+                                <Typography variant="body2" color="text.secondary" component="div">
+                                  Description: {transaction.description}
+                                </Typography>
+                              )}
                             </Box>
-                          </Box>
-                        }
-                        secondary={
-                          <Box mt={1}>
-                            <Typography variant="body2" color="text.secondary">
-                              Transaction ID: {transaction.transaction_id}
-                            </Typography>
-                            {transaction.description && (
-                              <Typography variant="body2" color="text.secondary">
-                                Description: {transaction.description}
-                              </Typography>
-                            )}
-                          </Box>
-                        }
-                      />
-                    </ListItem>
-                    {index < paginatedTransactions.length - 1 && <Divider />}
-                  </React.Fragment>
-                ))}
+                          }
+                        />
+                      </ListItem>
+                      {index < paginatedTransactions.length - 1 && <Divider />}
+                    </React.Fragment>
+                  );
+                })}
               </List>
 
               {/* Pagination */}
