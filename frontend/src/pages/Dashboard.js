@@ -38,6 +38,7 @@ import {
   TrendingUpOutlined,
   MonetizationOn,
   LocalOffer,
+  FormatQuote,
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -47,6 +48,7 @@ const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [currentQuote, setCurrentQuote] = useState(0);
   const [dashboardData, setDashboardData] = useState({
     accounts: [],
     recentTransactions: [],
@@ -59,8 +61,51 @@ const Dashboard = () => {
   const [selectedAccountId, setSelectedAccountId] = useState('');
   const [primaryAccountBalance, setPrimaryAccountBalance] = useState(0);
 
+  // Encouraging quotes array
+  const encouragingQuotes = [
+    {
+      text: "Every financial goal starts with a single step. Keep moving forward!",
+      author: "BlueBank Wisdom"
+    },
+    {
+      text: "Your financial future is created by what you do today, not tomorrow.",
+      author: "Smart Banking"
+    },
+    {
+      text: "Success is the sum of small efforts repeated day in and day out.",
+      author: "Financial Growth"
+    },
+    {
+      text: "The best time to start saving was yesterday. The second best time is now.",
+      author: "BlueBank Motivation"
+    },
+    {
+      text: "Building wealth is a marathon, not a sprint. Stay consistent!",
+      author: "Investment Wisdom"
+    },
+    {
+      text: "Your money should work as hard as you do. Make it count!",
+      author: "Financial Freedom"
+    },
+    {
+      text: "Every rupee saved today is a step towards your dreams tomorrow.",
+      author: "Savings Inspiration"
+    },
+    {
+      text: "Financial literacy is the key to unlocking your potential.",
+      author: "BlueBank Education"
+    }
+  ];
+
   useEffect(() => {
     fetchDashboardData();
+    
+    // Change quote every 10 seconds
+    const quoteInterval = setInterval(() => {
+      setCurrentQuote((prev) => (prev + 1) % encouragingQuotes.length);
+    }, 10000);
+
+    return () => clearInterval(quoteInterval);
   }, []);
 
   useEffect(() => {
@@ -216,6 +261,14 @@ const Dashboard = () => {
     }
   ];
 
+  // Get current time-based greeting
+  const getTimeBasedGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 17) return "Good afternoon";
+    return "Good evening";
+  };
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
@@ -228,99 +281,199 @@ const Dashboard = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      {/* Welcome Section */}
-      <Paper 
-        sx={{ 
-          background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-          color: 'white',
-          p: 4,
-          mb: 4,
-          borderRadius: 3,
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
-        }}
-      >
-        <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Box>
-            <Typography variant="h4" fontWeight="bold" gutterBottom>
-              Welcome back, {user?.first_name || user?.username}! 👋
-            </Typography>
-            <Typography variant="h6" sx={{ opacity: 0.9 }}>
-              Here's your banking overview for today
-            </Typography>
-            <Typography variant="body2" sx={{ opacity: 0.8, mt: 1 }}>
-              {new Date().toLocaleDateString('en-IN', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })}
-            </Typography>
-          </Box>
-          <Avatar
-            sx={{
-              width: 80,
-              height: 80,
-              bgcolor: 'rgba(255,255,255,0.15)',
-              fontSize: '2rem',
-              display: { xs: 'none', md: 'flex' },
-              border: '2px solid rgba(255,255,255,0.2)'
+      {/* Welcome Section & Banking Services Side by Side */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        {/* Welcome Section - Left Side */}
+        <Grid item xs={12} md={8}>
+          <Paper 
+            sx={{ 
+              background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+              color: 'white',
+              p: 4,
+              borderRadius: 3,
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              position: 'relative',
+              overflow: 'hidden'
             }}
           >
-            {user?.first_name?.charAt(0) || user?.username?.charAt(0) || 'U'}
-          </Avatar>
-        </Box>
-      </Paper>
+            {/* Decorative Background Elements */}
+            <Box
+              sx={{
+                position: 'absolute',
+                top: -20,
+                right: -20,
+                width: 100,
+                height: 100,
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.05)',
+              }}
+            />
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: -30,
+                left: -30,
+                width: 120,
+                height: 120,
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.03)',
+              }}
+            />
 
-      {/* Banking Services Section */}
-      <Card sx={{ mb: 4, borderRadius: 2, boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)' }}>
-        <CardContent>
-          <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ mb: 3 }}>
-            Banking Services
-          </Typography>
-          <Grid container spacing={2}>
-            {bankingServices.map((service, index) => (
-              <Grid item xs={12} sm={6} md={2.4} key={index}>
-                <Card 
-                  sx={{ 
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    background: service.gradient,
-                    color: 'white',
-                    height: 140,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    boxShadow: `0 4px 20px ${service.shadowColor}`,
-                    '&:hover': {
-                      transform: 'translateY(-5px)',
-                      boxShadow: `0 8px 30px ${service.shadowColor}`
-                    }
-                  }}
-                  onClick={service.action}
-                >
-                  <CardContent sx={{ 
-                    textAlign: 'center', 
-                    py: 2,
-                    flex: 1,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center'
-                  }}>
-                    <Box sx={{ mb: 1 }}>
-                      {service.icon}
-                    </Box>
-                    <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ fontSize: '1rem' }}>
-                      {service.title}
-                    </Typography>
-                    <Typography variant="caption" sx={{ opacity: 0.9, fontSize: '0.75rem', lineHeight: 1.2 }}>
-                      {service.description}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </CardContent>
-      </Card>
+            {/* Main Welcome Content */}
+            <Box display="flex" alignItems="center" justifyContent="space-between" sx={{ position: 'relative', zIndex: 1 }}>
+              <Box sx={{ flex: 1 }}>
+                <Typography variant="h4" fontWeight="bold" gutterBottom>
+                  {getTimeBasedGreeting()}, {user?.first_name || user?.username}! 👋
+                </Typography>
+                <Typography variant="h6" sx={{ opacity: 0.9, mb: 1 }}>
+                  Here's your banking overview for today
+                </Typography>
+                <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                  {new Date().toLocaleDateString('en-IN', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </Typography>
+              </Box>
+              <Avatar
+                sx={{
+                  width: 80,
+                  height: 80,
+                  bgcolor: 'rgba(255,255,255,0.15)',
+                  fontSize: '2rem',
+                  display: { xs: 'none', md: 'flex' },
+                  border: '2px solid rgba(255,255,255,0.2)'
+                }}
+              >
+                {user?.first_name?.charAt(0) || user?.username?.charAt(0) || 'U'}
+              </Avatar>
+            </Box>
+
+            {/* Motivational Quote Section */}
+            <Box 
+              sx={{ 
+                mt: 3, 
+                p: 2, 
+                backgroundColor: 'rgba(255, 255, 255, 0.1)', 
+                borderRadius: 2,
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                position: 'relative',
+                zIndex: 1
+              }}
+            >
+              <Box display="flex" alignItems="flex-start" gap={1}>
+                <FormatQuote sx={{ fontSize: 20, opacity: 0.7, transform: 'rotate(180deg)' }} />
+                <Box sx={{ flex: 1 }}>
+                  <Typography 
+                    variant="body1" 
+                    sx={{ 
+                      fontStyle: 'italic', 
+                      mb: 1,
+                      opacity: 0.95,
+                      lineHeight: 1.4
+                    }}
+                  >
+                    {encouragingQuotes[currentQuote].text}
+                  </Typography>
+                  <Typography 
+                    variant="caption" 
+                    sx={{ 
+                      opacity: 0.8,
+                      fontWeight: 500
+                    }}
+                  >
+                    — {encouragingQuotes[currentQuote].author}
+                  </Typography>
+                </Box>
+                <FormatQuote sx={{ fontSize: 20, opacity: 0.7 }} />
+              </Box>
+              
+              {/* Quote Indicators */}
+              <Box display="flex" justifyContent="center" gap={0.5} mt={2}>
+                {encouragingQuotes.map((_, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      width: 6,
+                      height: 6,
+                      borderRadius: '50%',
+                      backgroundColor: currentQuote === index ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.3)',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => setCurrentQuote(index)}
+                  />
+                ))}
+              </Box>
+            </Box>
+          </Paper>
+        </Grid>
+
+        {/* Banking Services - Right Side */}
+        <Grid item xs={12} md={4}>
+          <Card sx={{ 
+            borderRadius: 3, 
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            height: '100%'
+          }}>
+            <CardContent sx={{ p: 3 }}>
+              <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ mb: 2 }}>
+                Banking Services
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                {bankingServices.map((service, index) => (
+                  <Card 
+                    key={index}
+                    sx={{ 
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      background: service.gradient,
+                      color: 'white',
+                      minHeight: 70,
+                      display: 'flex',
+                      alignItems: 'center',
+                      boxShadow: `0 3px 12px ${service.shadowColor}`,
+                      '&:hover': {
+                        transform: 'translateX(5px)',
+                        boxShadow: `0 5px 20px ${service.shadowColor}`
+                      }
+                    }}
+                    onClick={service.action}
+                  >
+                    <CardContent sx={{ 
+                      display: 'flex',
+                      alignItems: 'center',
+                      p: 2,
+                      '&:last-child': { pb: 2 },
+                      width: '100%'
+                    }}>
+                      <Box sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>
+                        {service.icon}
+                      </Box>
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 0.5 }}>
+                          {service.title}
+                        </Typography>
+                        <Typography variant="caption" sx={{ opacity: 0.9, fontSize: '0.75rem' }}>
+                          {service.description}
+                        </Typography>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
 
       {/* Account Selector */}
       {dashboardData.accounts.length > 1 && (
