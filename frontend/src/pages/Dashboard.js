@@ -31,6 +31,13 @@ import {
   Add,
   Visibility,
   VisibilityOff,
+  AccountBalanceWallet,
+  AttachMoney,
+  Payment,
+  Savings,
+  TrendingUpOutlined,
+  MonetizationOn,
+  LocalOffer,
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -165,6 +172,50 @@ const Dashboard = () => {
     }
   ];
 
+  // Banking Services data
+  const bankingServices = [
+    {
+      title: 'Pay',
+      description: 'Bills, recharges, and instant payments',
+      icon: <Payment />,
+      gradient: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%)',
+      shadowColor: 'rgba(59, 130, 246, 0.3)',
+      action: () => alert('Payment services feature coming soon!')
+    },
+    {
+      title: 'Save',
+      description: 'Fixed deposits and savings plans',
+      icon: <Savings />,
+      gradient: 'linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%)',
+      shadowColor: 'rgba(16, 185, 129, 0.3)',
+      action: () => alert('Savings products feature coming soon!')
+    },
+    {
+      title: 'Invest',
+      description: 'Mutual funds and investment options',
+      icon: <TrendingUpOutlined />,
+      gradient: 'linear-gradient(135deg, #7c2d12 0%, #ea580c 50%, #fb923c 100%)',
+      shadowColor: 'rgba(234, 88, 12, 0.3)',
+      action: () => alert('Investment services feature coming soon!')
+    },
+    {
+      title: 'Borrow',
+      description: 'Personal, home, and vehicle loans',
+      icon: <MonetizationOn />,
+      gradient: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #c084fc 100%)',
+      shadowColor: 'rgba(168, 85, 247, 0.3)',
+      action: () => alert('Loan services feature coming soon!')
+    },
+    {
+      title: 'Offers',
+      description: 'Exclusive deals and cashback offers',
+      icon: <LocalOffer />,
+      gradient: 'linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f87171 100%)',
+      shadowColor: 'rgba(239, 68, 68, 0.3)',
+      action: () => alert('Special offers feature coming soon!')
+    }
+  ];
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
@@ -219,6 +270,57 @@ const Dashboard = () => {
           </Avatar>
         </Box>
       </Paper>
+
+      {/* Banking Services Section */}
+      <Card sx={{ mb: 4, borderRadius: 2, boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)' }}>
+        <CardContent>
+          <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ mb: 3 }}>
+            Banking Services
+          </Typography>
+          <Grid container spacing={2}>
+            {bankingServices.map((service, index) => (
+              <Grid item xs={12} sm={6} md={2.4} key={index}>
+                <Card 
+                  sx={{ 
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    background: service.gradient,
+                    color: 'white',
+                    height: 140,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    boxShadow: `0 4px 20px ${service.shadowColor}`,
+                    '&:hover': {
+                      transform: 'translateY(-5px)',
+                      boxShadow: `0 8px 30px ${service.shadowColor}`
+                    }
+                  }}
+                  onClick={service.action}
+                >
+                  <CardContent sx={{ 
+                    textAlign: 'center', 
+                    py: 2,
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center'
+                  }}>
+                    <Box sx={{ mb: 1 }}>
+                      {service.icon}
+                    </Box>
+                    <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ fontSize: '1rem' }}>
+                      {service.title}
+                    </Typography>
+                    <Typography variant="caption" sx={{ opacity: 0.9, fontSize: '0.75rem', lineHeight: 1.2 }}>
+                      {service.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </CardContent>
+      </Card>
 
       {/* Account Selector */}
       {dashboardData.accounts.length > 1 && (
@@ -587,7 +689,7 @@ const Dashboard = () => {
           </Card>
         </Grid>
 
-        {/* Quick Actions */}
+        {/* Quick Actions and Recent Transactions */}
         <Grid item xs={12} md={4}>
           <Card sx={{ 
             mb: 3, 
