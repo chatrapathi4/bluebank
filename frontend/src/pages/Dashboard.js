@@ -180,11 +180,12 @@ const Dashboard = () => {
       {/* Welcome Section */}
       <Paper 
         sx={{ 
-          background: 'linear-gradient(135deg, #003d82 0%, #4a6fa5 100%)',
+          background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
           color: 'white',
           p: 4,
           mb: 4,
-          borderRadius: 3
+          borderRadius: 3,
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
         }}
       >
         <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -208,9 +209,10 @@ const Dashboard = () => {
             sx={{
               width: 80,
               height: 80,
-              bgcolor: 'rgba(255,255,255,0.2)',
+              bgcolor: 'rgba(255,255,255,0.15)',
               fontSize: '2rem',
-              display: { xs: 'none', md: 'flex' }
+              display: { xs: 'none', md: 'flex' },
+              border: '2px solid rgba(255,255,255,0.2)'
             }}
           >
             {user?.first_name?.charAt(0) || user?.username?.charAt(0) || 'U'}
@@ -220,7 +222,7 @@ const Dashboard = () => {
 
       {/* Account Selector */}
       {dashboardData.accounts.length > 1 && (
-        <Card sx={{ mb: 3 }}>
+        <Card sx={{ mb: 3, borderRadius: 2, boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)' }}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
               Select Primary Account
@@ -244,141 +246,229 @@ const Dashboard = () => {
         </Card>
       )}
 
-      {/* Summary Cards - All Same Height */}
+      {/* Enhanced Summary Cards with Dark Themes */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
+        {/* Balance Card - Dark Green/Teal */}
         <Grid item xs={12} sm={6} md={3}>
           <Card sx={{ 
             height: '100%',
-            minHeight: 140,
-            background: 'linear-gradient(135deg, #4caf50 0%, #81c784 100%)', 
+            minHeight: 160,
+            background: 'linear-gradient(135deg, #0d7377 0%, #14a085 50%, #2dd4bf 100%)',
             color: 'white',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            position: 'relative',
+            overflow: 'hidden',
+            boxShadow: '0 8px 32px rgba(13, 115, 119, 0.3)',
+            transition: 'transform 0.3s ease',
+            '&:hover': {
+              transform: 'translateY(-5px)',
+              boxShadow: '0 12px 40px rgba(13, 115, 119, 0.4)'
+            }
           }}>
+            <Box 
+              sx={{
+                position: 'absolute',
+                top: -50,
+                right: -50,
+                width: 100,
+                height: 100,
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.1)',
+              }}
+            />
             <CardContent sx={{ 
               flex: 1, 
               display: 'flex', 
               flexDirection: 'column',
               justifyContent: 'space-between',
-              p: 2
+              p: 3,
+              position: 'relative',
+              zIndex: 1
             }}>
-              <Box display="flex" alignItems="center" justifyContent="space-between">
+              <Box display="flex" alignItems="flex-start" justifyContent="space-between">
                 <Box sx={{ flex: 1 }}>
-                  <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
+                  <Typography variant="body2" sx={{ opacity: 0.9, mb: 1, fontSize: '0.9rem' }}>
                     {selectedAccount ? `${selectedAccount.account_type} Balance` : 'Account Balance'}
                   </Typography>
-                  <Typography variant="h5" fontWeight="bold" sx={{ mb: 1 }}>
+                  <Typography variant="h4" fontWeight="700" sx={{ mb: 1, letterSpacing: '-0.5px' }}>
                     {formatCurrency(primaryAccountBalance)}
                   </Typography>
                   {selectedAccount && (
-                    <Typography variant="caption" sx={{ opacity: 0.8 }}>
-                      A/C: {selectedAccount.account_number}
+                    <Typography variant="caption" sx={{ opacity: 0.8, fontSize: '0.75rem' }}>
+                      A/C: ••••{selectedAccount.account_number.slice(-4)}
                     </Typography>
                   )}
                 </Box>
-                <AccountBalance sx={{ fontSize: 35, opacity: 0.8 }} />
+                <AccountBalance sx={{ fontSize: 40, opacity: 0.9 }} />
               </Box>
             </CardContent>
           </Card>
         </Grid>
 
+        {/* Total Accounts Card - Dark Purple */}
         <Grid item xs={12} sm={6} md={3}>
           <Card sx={{ 
             height: '100%',
-            minHeight: 140,
-            background: 'linear-gradient(135deg, #ff9800 0%, #ffb74d 100%)', 
+            minHeight: 160,
+            background: 'linear-gradient(135deg, #4c1d95 0%, #7c3aed 50%, #a855f7 100%)',
             color: 'white',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            position: 'relative',
+            overflow: 'hidden',
+            boxShadow: '0 8px 32px rgba(124, 58, 237, 0.3)',
+            transition: 'transform 0.3s ease',
+            '&:hover': {
+              transform: 'translateY(-5px)',
+              boxShadow: '0 12px 40px rgba(124, 58, 237, 0.4)'
+            }
           }}>
+            <Box 
+              sx={{
+                position: 'absolute',
+                top: -30,
+                right: -30,
+                width: 80,
+                height: 80,
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.1)',
+              }}
+            />
             <CardContent sx={{ 
               flex: 1, 
               display: 'flex', 
               flexDirection: 'column',
               justifyContent: 'space-between',
-              p: 2
+              p: 3,
+              position: 'relative',
+              zIndex: 1
             }}>
-              <Box display="flex" alignItems="center" justifyContent="space-between">
+              <Box display="flex" alignItems="flex-start" justifyContent="space-between">
                 <Box sx={{ flex: 1 }}>
-                  <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
+                  <Typography variant="body2" sx={{ opacity: 0.9, mb: 1, fontSize: '0.9rem' }}>
                     Total Accounts
                   </Typography>
-                  <Typography variant="h5" fontWeight="bold" sx={{ mb: 1 }}>
+                  <Typography variant="h4" fontWeight="700" sx={{ mb: 1, letterSpacing: '-0.5px' }}>
                     {dashboardData.accounts.length}
                   </Typography>
-                  <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                  <Typography variant="caption" sx={{ opacity: 0.8, fontSize: '0.75rem' }}>
                     Combined: {formatCurrency(dashboardData.totalBalance)}
                   </Typography>
                 </Box>
-                <CreditCard sx={{ fontSize: 35, opacity: 0.8 }} />
+                <CreditCard sx={{ fontSize: 40, opacity: 0.9 }} />
               </Box>
             </CardContent>
           </Card>
         </Grid>
 
+        {/* This Week Sent Card - Dark Blue */}
         <Grid item xs={12} sm={6} md={3}>
           <Card sx={{ 
             height: '100%',
-            minHeight: 140,
-            background: 'linear-gradient(135deg, #2196f3 0%, #64b5f6 100%)', 
+            minHeight: 160,
+            background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%)',
             color: 'white',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            position: 'relative',
+            overflow: 'hidden',
+            boxShadow: '0 8px 32px rgba(59, 130, 246, 0.3)',
+            transition: 'transform 0.3s ease',
+            '&:hover': {
+              transform: 'translateY(-5px)',
+              boxShadow: '0 12px 40px rgba(59, 130, 246, 0.4)'
+            }
           }}>
+            <Box 
+              sx={{
+                position: 'absolute',
+                bottom: -40,
+                left: -40,
+                width: 90,
+                height: 90,
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.08)',
+              }}
+            />
             <CardContent sx={{ 
               flex: 1, 
               display: 'flex', 
               flexDirection: 'column',
               justifyContent: 'space-between',
-              p: 2
+              p: 3,
+              position: 'relative',
+              zIndex: 1
             }}>
-              <Box display="flex" alignItems="center" justifyContent="space-between">
+              <Box display="flex" alignItems="flex-start" justifyContent="space-between">
                 <Box sx={{ flex: 1 }}>
-                  <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
+                  <Typography variant="body2" sx={{ opacity: 0.9, mb: 1, fontSize: '0.9rem' }}>
                     This Week Sent
                   </Typography>
-                  <Typography variant="h5" fontWeight="bold" sx={{ mb: 1 }}>
+                  <Typography variant="h4" fontWeight="700" sx={{ mb: 1, letterSpacing: '-0.5px' }}>
                     {formatCurrency(dashboardData.totalSentThisWeek)}
                   </Typography>
-                  <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                  <Typography variant="caption" sx={{ opacity: 0.8, fontSize: '0.75rem' }}>
                     Total Transfers
                   </Typography>
                 </Box>
-                <TrendingUp sx={{ fontSize: 35, opacity: 0.8 }} />
+                <TrendingUp sx={{ fontSize: 40, opacity: 0.9 }} />
               </Box>
             </CardContent>
           </Card>
         </Grid>
 
+        {/* Pending Transactions Card - Dark Red/Orange */}
         <Grid item xs={12} sm={6} md={3}>
           <Card sx={{ 
             height: '100%',
-            minHeight: 140,
-            background: 'linear-gradient(135deg, #f44336 0%, #ef5350 100%)', 
+            minHeight: 160,
+            background: 'linear-gradient(135deg, #991b1b 0%, #dc2626 50%, #f87171 100%)',
             color: 'white',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            position: 'relative',
+            overflow: 'hidden',
+            boxShadow: '0 8px 32px rgba(220, 38, 38, 0.3)',
+            transition: 'transform 0.3s ease',
+            '&:hover': {
+              transform: 'translateY(-5px)',
+              boxShadow: '0 12px 40px rgba(220, 38, 38, 0.4)'
+            }
           }}>
+            <Box 
+              sx={{
+                position: 'absolute',
+                top: -20,
+                left: -20,
+                width: 70,
+                height: 70,
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.1)',
+              }}
+            />
             <CardContent sx={{ 
               flex: 1, 
               display: 'flex', 
               flexDirection: 'column',
               justifyContent: 'space-between',
-              p: 2
+              p: 3,
+              position: 'relative',
+              zIndex: 1
             }}>
-              <Box display="flex" alignItems="center" justifyContent="space-between">
+              <Box display="flex" alignItems="flex-start" justifyContent="space-between">
                 <Box sx={{ flex: 1 }}>
-                  <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
+                  <Typography variant="body2" sx={{ opacity: 0.9, mb: 1, fontSize: '0.9rem' }}>
                     Pending Transactions
                   </Typography>
-                  <Typography variant="h5" fontWeight="bold" sx={{ mb: 1 }}>
+                  <Typography variant="h4" fontWeight="700" sx={{ mb: 1, letterSpacing: '-0.5px' }}>
                     {dashboardData.pendingTransactions}
                   </Typography>
-                  <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                  <Typography variant="caption" sx={{ opacity: 0.8, fontSize: '0.75rem' }}>
                     Processing
                   </Typography>
                 </Box>
-                <Receipt sx={{ fontSize: 35, opacity: 0.8 }} />
+                <Receipt sx={{ fontSize: 40, opacity: 0.9 }} />
               </Box>
             </CardContent>
           </Card>
@@ -388,16 +478,26 @@ const Dashboard = () => {
       <Grid container spacing={3}>
         {/* Accounts Overview */}
         <Grid item xs={12} md={8}>
-          <Card sx={{ height: 'fit-content' }}>
+          <Card sx={{ 
+            height: 'fit-content',
+            borderRadius: 2,
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+            border: '1px solid rgba(0, 0, 0, 0.05)'
+          }}>
             <CardContent>
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                <Typography variant="h6" fontWeight="bold">
+                <Typography variant="h6" fontWeight="bold" color="text.primary">
                   My Accounts
                 </Typography>
                 <Button 
                   variant="outlined" 
                   size="small"
                   onClick={() => navigate('/accounts')}
+                  sx={{
+                    borderRadius: 2,
+                    textTransform: 'none',
+                    fontWeight: 600
+                  }}
                 >
                   View All
                 </Button>
@@ -410,9 +510,10 @@ const Dashboard = () => {
                       <ListItem 
                         sx={{ 
                           px: 0,
-                          backgroundColor: selectedAccountId === account.id.toString() ? 'rgba(0, 61, 130, 0.1)' : 'transparent',
-                          borderRadius: 1,
-                          mb: 1
+                          backgroundColor: selectedAccountId === account.id.toString() ? 'rgba(0, 61, 130, 0.08)' : 'transparent',
+                          borderRadius: 2,
+                          mb: 1,
+                          border: selectedAccountId === account.id.toString() ? '1px solid rgba(0, 61, 130, 0.2)' : '1px solid transparent'
                         }}
                       >
                         <ListItemIcon>
@@ -429,12 +530,12 @@ const Dashboard = () => {
                                       label="Primary" 
                                       size="small" 
                                       color="primary" 
-                                      sx={{ ml: 1 }}
+                                      sx={{ ml: 1, borderRadius: 1 }}
                                     />
                                   )}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                  {account.account_number}
+                                  ••••••••{account.account_number.slice(-4)}
                                 </Typography>
                               </Box>
                               <Box textAlign="right">
@@ -448,6 +549,7 @@ const Dashboard = () => {
                                   <Button
                                     size="small"
                                     onClick={() => toggleBalanceVisibility(account.id)}
+                                    sx={{ minWidth: 'auto', p: 1 }}
                                   >
                                     {showBalances[account.id] ? <VisibilityOff /> : <Visibility />}
                                   </Button>
@@ -456,6 +558,7 @@ const Dashboard = () => {
                                   label={account.status} 
                                   color={account.status === 'ACTIVE' ? 'success' : 'default'}
                                   size="small"
+                                  sx={{ borderRadius: 1 }}
                                 />
                               </Box>
                             </Box>
@@ -475,7 +578,7 @@ const Dashboard = () => {
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                     Contact the bank to open your first account
                   </Typography>
-                  <Button variant="contained" startIcon={<Add />}>
+                  <Button variant="contained" startIcon={<Add />} sx={{ borderRadius: 2 }}>
                     Contact Bank
                   </Button>
                 </Box>
@@ -486,7 +589,13 @@ const Dashboard = () => {
 
         {/* Quick Actions */}
         <Grid item xs={12} md={4}>
-          <Card sx={{ mb: 3, height: 'fit-content' }}>
+          <Card sx={{ 
+            mb: 3, 
+            height: 'fit-content',
+            borderRadius: 2,
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+            border: '1px solid rgba(0, 0, 0, 0.05)'
+          }}>
             <CardContent>
               <Typography variant="h6" fontWeight="bold" gutterBottom>
                 Quick Actions
@@ -497,13 +606,17 @@ const Dashboard = () => {
                     <Card 
                       sx={{ 
                         cursor: 'pointer',
-                        transition: 'transform 0.2s',
-                        height: 100,
+                        transition: 'all 0.3s ease',
+                        height: 110,
                         display: 'flex',
                         flexDirection: 'column',
+                        borderRadius: 2,
+                        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                        border: '1px solid rgba(0, 0, 0, 0.08)',
                         '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: 3
+                          transform: 'translateY(-3px)',
+                          boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)',
+                          background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)'
                         }
                       }}
                       onClick={action.action}
@@ -514,12 +627,12 @@ const Dashboard = () => {
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'center',
-                        p: 1
+                        p: 2
                       }}>
-                        <Box sx={{ color: `${action.color}.main`, mb: 1 }}>
+                        <Box sx={{ color: `${action.color}.main`, mb: 1.5 }}>
                           {action.icon}
                         </Box>
-                        <Typography variant="caption" fontWeight="bold">
+                        <Typography variant="caption" fontWeight="bold" color="text.primary">
                           {action.title}
                         </Typography>
                       </CardContent>
@@ -531,7 +644,12 @@ const Dashboard = () => {
           </Card>
 
           {/* Recent Transactions */}
-          <Card sx={{ height: 'fit-content' }}>
+          <Card sx={{ 
+            height: 'fit-content',
+            borderRadius: 2,
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+            border: '1px solid rgba(0, 0, 0, 0.05)'
+          }}>
             <CardContent>
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                 <Typography variant="h6" fontWeight="bold">
@@ -541,6 +659,11 @@ const Dashboard = () => {
                   variant="outlined" 
                   size="small"
                   onClick={() => navigate('/transactions')}
+                  sx={{
+                    borderRadius: 2,
+                    textTransform: 'none',
+                    fontWeight: 600
+                  }}
                 >
                   View All
                 </Button>
