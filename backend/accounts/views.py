@@ -40,11 +40,16 @@ class BeneficiaryDetailView(generics.RetrieveUpdateDestroyAPIView):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def account_summary(request):
+    """Get comprehensive account summary for dashboard"""
     accounts = Account.objects.filter(user=request.user)
     total_balance = sum(account.balance for account in accounts)
     
+    # Get active accounts count
+    active_accounts = accounts.filter(status='ACTIVE').count()
+    
     data = {
         'total_accounts': accounts.count(),
+        'active_accounts': active_accounts,
         'total_balance': total_balance,
         'accounts': AccountSerializer(accounts, many=True).data
     }
