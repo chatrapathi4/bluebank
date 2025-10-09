@@ -18,28 +18,11 @@ import {
   Paper,
   MenuItem,
   TextField,
+  Fade,
+  Zoom,
+  Slide,
 } from '@mui/material';
-import {
-  AccountBalance,
-  TrendingUp,
-  TrendingDown,
-  Send,
-  Receipt,
-  Person,
-  CreditCard,
-  History,
-  Add,
-  Visibility,
-  VisibilityOff,
-  AccountBalanceWallet,
-  AttachMoney,
-  Payment,
-  Savings,
-  TrendingUpOutlined,
-  MonetizationOn,
-  LocalOffer,
-  FormatQuote,
-} from '@mui/icons-material';
+import * as Icons from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -48,7 +31,6 @@ const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [currentQuote, setCurrentQuote] = useState(0);
   const [dashboardData, setDashboardData] = useState({
     accounts: [],
     recentTransactions: [],
@@ -61,51 +43,8 @@ const Dashboard = () => {
   const [selectedAccountId, setSelectedAccountId] = useState('');
   const [primaryAccountBalance, setPrimaryAccountBalance] = useState(0);
 
-  // Encouraging quotes array
-  const encouragingQuotes = [
-    {
-      text: "Every financial goal starts with a single step. Keep moving forward!",
-      author: "BlueBank Wisdom"
-    },
-    {
-      text: "Your financial future is created by what you do today, not tomorrow.",
-      author: "Smart Banking"
-    },
-    {
-      text: "Success is the sum of small efforts repeated day in and day out.",
-      author: "Financial Growth"
-    },
-    {
-      text: "The best time to start saving was yesterday. The second best time is now.",
-      author: "BlueBank Motivation"
-    },
-    {
-      text: "Building wealth is a marathon, not a sprint. Stay consistent!",
-      author: "Investment Wisdom"
-    },
-    {
-      text: "Your money should work as hard as you do. Make it count!",
-      author: "Financial Freedom"
-    },
-    {
-      text: "Every rupee saved today is a step towards your dreams tomorrow.",
-      author: "Savings Inspiration"
-    },
-    {
-      text: "Financial literacy is the key to unlocking your potential.",
-      author: "BlueBank Education"
-    }
-  ];
-
   useEffect(() => {
     fetchDashboardData();
-    
-    // Change quote every 10 seconds
-    const quoteInterval = setInterval(() => {
-      setCurrentQuote((prev) => (prev + 1) % encouragingQuotes.length);
-    }, 10000);
-
-    return () => clearInterval(quoteInterval);
   }, []);
 
   useEffect(() => {
@@ -123,8 +62,10 @@ const Dashboard = () => {
     try {
       setLoading(true);
       
-      const accountsResponse = await axios.get('/api/accounts/summary/');
-      const transactionsResponse = await axios.get('/api/transactions/summary/');
+      const [accountsResponse, transactionsResponse] = await Promise.all([
+        axios.get('/api/accounts/summary/'),
+        axios.get('/api/transactions/summary/')
+      ]);
       
       const accounts = accountsResponse.data.accounts || [];
       
@@ -179,7 +120,7 @@ const Dashboard = () => {
   };
 
   const getTransactionIcon = (transaction) => {
-    return transaction.transaction_type === 'DEPOSIT' ? <TrendingUp color="success" /> : <TrendingDown color="error" />;
+    return transaction.transaction_type === 'DEPOSIT' ? <Icons.TrendingUp color="success" /> : <Icons.TrendingDown color="error" />;
   };
 
   const getTransactionColor = (transaction) => {
@@ -190,28 +131,28 @@ const Dashboard = () => {
     {
       title: 'Transfer Money',
       description: 'Send money to any account',
-      icon: <Send />,
+      icon: <Icons.Send />,
       color: 'primary',
       action: () => navigate('/transfer')
     },
     {
       title: 'View Accounts',
       description: 'Manage your accounts',
-      icon: <AccountBalance />,
+      icon: <Icons.AccountBalance />,
       color: 'secondary',
       action: () => navigate('/accounts')
     },
     {
       title: 'Transaction History',
       description: 'View all transactions',
-      icon: <History />,
+      icon: <Icons.History />,
       color: 'info',
       action: () => navigate('/transactions')
     },
     {
       title: 'Profile Settings',
       description: 'Update your profile',
-      icon: <Person />,
+      icon: <Icons.Person />,
       color: 'warning',
       action: () => navigate('/profile')
     }
@@ -222,7 +163,7 @@ const Dashboard = () => {
     {
       title: 'Pay',
       description: 'Bills, recharges, and instant payments',
-      icon: <Payment />,
+      icon: <Icons.Payment />,
       gradient: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%)',
       shadowColor: 'rgba(59, 130, 246, 0.3)',
       action: () => alert('Payment services feature coming soon!')
@@ -230,7 +171,7 @@ const Dashboard = () => {
     {
       title: 'Save',
       description: 'Fixed deposits and savings plans',
-      icon: <Savings />,
+      icon: <Icons.Savings />,
       gradient: 'linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%)',
       shadowColor: 'rgba(16, 185, 129, 0.3)',
       action: () => alert('Savings products feature coming soon!')
@@ -238,7 +179,7 @@ const Dashboard = () => {
     {
       title: 'Invest',
       description: 'Mutual funds and investment options',
-      icon: <TrendingUpOutlined />,
+      icon: <Icons.TrendingUpOutlined />,
       gradient: 'linear-gradient(135deg, #7c2d12 0%, #ea580c 50%, #fb923c 100%)',
       shadowColor: 'rgba(234, 88, 12, 0.3)',
       action: () => alert('Investment services feature coming soon!')
@@ -246,7 +187,7 @@ const Dashboard = () => {
     {
       title: 'Borrow',
       description: 'Personal, home, and vehicle loans',
-      icon: <MonetizationOn />,
+      icon: <Icons.MonetizationOn />,
       gradient: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #c084fc 100%)',
       shadowColor: 'rgba(168, 85, 247, 0.3)',
       action: () => alert('Loan services feature coming soon!')
@@ -254,20 +195,12 @@ const Dashboard = () => {
     {
       title: 'Offers',
       description: 'Exclusive deals and cashback offers',
-      icon: <LocalOffer />,
+      icon: <Icons.LocalOffer />,
       gradient: 'linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f87171 100%)',
       shadowColor: 'rgba(239, 68, 68, 0.3)',
       action: () => alert('Special offers feature coming soon!')
     }
   ];
-
-  // Get current time-based greeting
-  const getTimeBasedGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 17) return "Good afternoon";
-    return "Good evening";
-  };
 
   if (loading) {
     return (
@@ -281,9 +214,9 @@ const Dashboard = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      {/* Welcome Section & Banking Services Side by Side */}
+      {/* Simplified Welcome Section & Banking Services Side by Side */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        {/* Welcome Section - Left Side */}
+        {/* Simplified Welcome Section - Left Side */}
         <Grid item xs={12} md={8}>
           <Paper 
             sx={{ 
@@ -294,46 +227,18 @@ const Dashboard = () => {
               boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
               height: '100%',
               display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              position: 'relative',
-              overflow: 'hidden'
+              alignItems: 'center'
             }}
           >
-            {/* Decorative Background Elements */}
-            <Box
-              sx={{
-                position: 'absolute',
-                top: -20,
-                right: -20,
-                width: 100,
-                height: 100,
-                borderRadius: '50%',
-                background: 'rgba(255, 255, 255, 0.05)',
-              }}
-            />
-            <Box
-              sx={{
-                position: 'absolute',
-                bottom: -30,
-                left: -30,
-                width: 120,
-                height: 120,
-                borderRadius: '50%',
-                background: 'rgba(255, 255, 255, 0.03)',
-              }}
-            />
-
-            {/* Main Welcome Content */}
-            <Box display="flex" alignItems="center" justifyContent="space-between" sx={{ position: 'relative', zIndex: 1 }}>
-              <Box sx={{ flex: 1 }}>
+            <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
+              <Box>
                 <Typography variant="h4" fontWeight="bold" gutterBottom>
-                  {getTimeBasedGreeting()}, {user?.first_name || user?.username}! 👋
+                  Welcome back, {user?.first_name || user?.username}! 👋
                 </Typography>
-                <Typography variant="h6" sx={{ opacity: 0.9, mb: 1 }}>
+                <Typography variant="h6" sx={{ opacity: 0.9 }}>
                   Here's your banking overview for today
                 </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                <Typography variant="body2" sx={{ opacity: 0.8, mt: 1 }}>
                   {new Date().toLocaleDateString('en-IN', { 
                     weekday: 'long', 
                     year: 'numeric', 
@@ -354,65 +259,6 @@ const Dashboard = () => {
               >
                 {user?.first_name?.charAt(0) || user?.username?.charAt(0) || 'U'}
               </Avatar>
-            </Box>
-
-            {/* Motivational Quote Section */}
-            <Box 
-              sx={{ 
-                mt: 3, 
-                p: 2, 
-                backgroundColor: 'rgba(255, 255, 255, 0.1)', 
-                borderRadius: 2,
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                position: 'relative',
-                zIndex: 1
-              }}
-            >
-              <Box display="flex" alignItems="flex-start" gap={1}>
-                <FormatQuote sx={{ fontSize: 20, opacity: 0.7, transform: 'rotate(180deg)' }} />
-                <Box sx={{ flex: 1 }}>
-                  <Typography 
-                    variant="body1" 
-                    sx={{ 
-                      fontStyle: 'italic', 
-                      mb: 1,
-                      opacity: 0.95,
-                      lineHeight: 1.4
-                    }}
-                  >
-                    {encouragingQuotes[currentQuote].text}
-                  </Typography>
-                  <Typography 
-                    variant="caption" 
-                    sx={{ 
-                      opacity: 0.8,
-                      fontWeight: 500
-                    }}
-                  >
-                    — {encouragingQuotes[currentQuote].author}
-                  </Typography>
-                </Box>
-                <FormatQuote sx={{ fontSize: 20, opacity: 0.7 }} />
-              </Box>
-              
-              {/* Quote Indicators */}
-              <Box display="flex" justifyContent="center" gap={0.5} mt={2}>
-                {encouragingQuotes.map((_, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      width: 6,
-                      height: 6,
-                      borderRadius: '50%',
-                      backgroundColor: currentQuote === index ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.3)',
-                      transition: 'all 0.3s ease',
-                      cursor: 'pointer'
-                    }}
-                    onClick={() => setCurrentQuote(index)}
-                  />
-                ))}
-              </Box>
             </Box>
           </Paper>
         </Grid>
@@ -555,7 +401,7 @@ const Dashboard = () => {
                     </Typography>
                   )}
                 </Box>
-                <AccountBalance sx={{ fontSize: 40, opacity: 0.9 }} />
+                <Icons.AccountBalance sx={{ fontSize: 40, opacity: 0.9 }} />
               </Box>
             </CardContent>
           </Card>
@@ -611,7 +457,7 @@ const Dashboard = () => {
                     Combined: {formatCurrency(dashboardData.totalBalance)}
                   </Typography>
                 </Box>
-                <CreditCard sx={{ fontSize: 40, opacity: 0.9 }} />
+                <Icons.CreditCard sx={{ fontSize: 40, opacity: 0.9 }} />
               </Box>
             </CardContent>
           </Card>
@@ -667,7 +513,7 @@ const Dashboard = () => {
                     Total Transfers
                   </Typography>
                 </Box>
-                <TrendingUp sx={{ fontSize: 40, opacity: 0.9 }} />
+                <Icons.TrendingUp sx={{ fontSize: 40, opacity: 0.9 }} />
               </Box>
             </CardContent>
           </Card>
@@ -723,7 +569,7 @@ const Dashboard = () => {
                     Processing
                   </Typography>
                 </Box>
-                <Receipt sx={{ fontSize: 40, opacity: 0.9 }} />
+                <Icons.Receipt sx={{ fontSize: 40, opacity: 0.9 }} />
               </Box>
             </CardContent>
           </Card>
@@ -772,7 +618,7 @@ const Dashboard = () => {
                         }}
                       >
                         <ListItemIcon>
-                          <AccountBalance color={selectedAccountId === account.id.toString() ? 'primary' : 'inherit'} />
+                          <Icons.AccountBalance color={selectedAccountId === account.id.toString() ? 'primary' : 'inherit'} />
                         </ListItemIcon>
                         <ListItemText
                           primary={
@@ -806,7 +652,7 @@ const Dashboard = () => {
                                     onClick={() => toggleBalanceVisibility(account.id)}
                                     sx={{ minWidth: 'auto', p: 1 }}
                                   >
-                                    {showBalances[account.id] ? <VisibilityOff /> : <Visibility />}
+                                    {showBalances[account.id] ? <Icons.VisibilityOff /> : <Icons.Visibility />}
                                   </Button>
                                 </Box>
                                 <Chip 
@@ -826,14 +672,14 @@ const Dashboard = () => {
                 </List>
               ) : (
                 <Box textAlign="center" py={4}>
-                  <AccountBalance sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
+                  <Icons.AccountBalance sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
                   <Typography variant="h6" color="text.secondary" gutterBottom>
                     No Accounts Found
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                     Contact the bank to open your first account
                   </Typography>
-                  <Button variant="contained" startIcon={<Add />} sx={{ borderRadius: 2 }}>
+                  <Button variant="contained" startIcon={<Icons.Add />} sx={{ borderRadius: 2 }}>
                     Contact Bank
                   </Button>
                 </Box>
@@ -939,14 +785,15 @@ const Dashboard = () => {
                             </Typography>
                           }
                           secondary={
-                            <Box>
+                            <React.Fragment>
                               <Typography variant="caption" color="text.secondary">
                                 {transaction.beneficiary_name}
                               </Typography>
-                              <Typography variant="caption" display="block" color="text.secondary">
+                              <br />
+                              <Typography variant="caption" color="text.secondary">
                                 {formatDateTime(transaction.created_at)}
                               </Typography>
-                            </Box>
+                            </React.Fragment>
                           }
                         />
                         <Typography 
@@ -964,7 +811,7 @@ const Dashboard = () => {
                 </List>
               ) : (
                 <Box textAlign="center" py={3}>
-                  <Receipt sx={{ fontSize: 40, color: 'text.secondary', mb: 1 }} />
+                  <Icons.Receipt sx={{ fontSize: 40, color: 'text.secondary', mb: 1 }} />
                   <Typography variant="body2" color="text.secondary">
                     No recent transactions
                   </Typography>
