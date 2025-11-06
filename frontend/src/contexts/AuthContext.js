@@ -12,7 +12,8 @@ export const useAuth = () => {
 };
 
 // Set up axios defaults
-axios.defaults.baseURL = 'http://127.0.0.1:8000';
+// Set axios baseURL to same origin so frontend and backend share one URL
+axios.defaults.baseURL = process.env.REACT_APP_API_URL || '/';
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 
 export const AuthProvider = ({ children }) => {
@@ -35,9 +36,11 @@ export const AuthProvider = ({ children }) => {
       const storedToken = localStorage.getItem('access_token');
       if (storedToken) {
         try {
+          // ensure axios sends auth header for the profile check
+          axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+          setToken(storedToken);
           const response = await axios.get('/api/auth/profile/');
           setUser(response.data);
-          setToken(storedToken);
         } catch (error) {
           console.error('Auth check failed:', error);
           logout();

@@ -1,0 +1,24 @@
+services:
+  - type: database
+    name: bluebank-db
+    plan: starter
+    postgresOptions:
+      version: "15"
+
+  - type: web
+    name: bluebank
+    env: docker
+    dockerfilePath: Dockerfile
+    branch: main
+    plan: free
+    envVars:
+      - key: SECRET_KEY
+        from: env
+      - key: DEBUG
+        from: env
+      - key: DATABASE_URL
+        from: env
+      - key: ALLOWED_HOSTS
+        from: env
+      - key: CORS_ALLOWED_ORIGINS
+        from: env
